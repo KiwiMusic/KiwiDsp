@@ -24,8 +24,8 @@
 #ifndef __DEF_KIWI_DSP_MODULES__
 #define __DEF_KIWI_DSP_MODULES__
 
-#include "DspIo.h"
-#include "DspGenerator.h"
-#include "DspMath.h"
+#include "KiwiDspIo.h"
+#include "KiwiDspGenerator.h"
+#include "KiwiDspMath.h"
 
 #endif

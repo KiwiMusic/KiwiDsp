@@ -24,7 +24,7 @@
 #ifndef __DEF_KIWI_DSP_NODE__
 #define __DEF_KIWI_DSP_NODE__
 
-#include "DspIoput.h"
+#include "KiwiDspIoput.h"
 
 namespace Kiwi
 {

@@ -21,7 +21,7 @@
  ==============================================================================
 */
 
-#include "DspMath.h"
+#include "KiwiDspMath.h"
 
 namespace Kiwi
 {

@@ -24,7 +24,7 @@
 #ifndef __DEF_KIWI_DSP_IOPUT__
 #define __DEF_KIWI_DSP_IOPUT__
 
-#include "DspError.h"
+#include "KiwiDspError.h"
 
 namespace Kiwi
 {

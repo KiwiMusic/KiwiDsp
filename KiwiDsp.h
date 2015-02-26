@@ -24,8 +24,8 @@
 #ifndef __DEF_KIWI_DSP__
 #define __DEF_KIWI_DSP__
 
-#include "Modules/DspModules.h"
-#include "Context/DspDevice.h"
+#include "KiwiDspModels/KiwiDspModels.h"
+#include "KiwiDspModules/KiwiDspModules.h"
 
 #endif
 

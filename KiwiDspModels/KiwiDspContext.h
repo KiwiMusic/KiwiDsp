@@ -24,7 +24,7 @@
 #ifndef __DEF_KIWI_DSP_CONTEXT__
 #define __DEF_KIWI_DSP_CONTEXT__
 
-#include "DspChain.h"
+#include "KiwiDspChain.h"
 
 namespace Kiwi
 {

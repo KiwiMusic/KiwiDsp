@@ -24,7 +24,7 @@
 #ifndef __DEF_KIWI_DSP_ERROR__
 #define __DEF_KIWI_DSP_ERROR__
 
-#include "DspSignal.h"
+#include "KiwiDspSignal.h"
 
 namespace Kiwi
 {

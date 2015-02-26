@@ -21,7 +21,7 @@
  ==============================================================================
 */
 
-#include "DspGenerator.h"
+#include "KiwiDspGenerator.h"
 
 namespace Kiwi
 {

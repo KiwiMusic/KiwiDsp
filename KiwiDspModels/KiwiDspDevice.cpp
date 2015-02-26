@@ -21,7 +21,7 @@
  ==============================================================================
 */
 
-#include "DspDevice.h"
+#include "KiwiDspDevice.h"
 
 namespace Kiwi
 {

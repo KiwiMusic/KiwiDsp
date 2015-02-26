@@ -24,7 +24,7 @@
 #ifndef __DEF_KIWI_DSP_CHAIN__
 #define __DEF_KIWI_DSP_CHAIN__
 
-#include "DspNode.h"
+#include "KiwiDspNode.h"
 
 // TODO :
 // - Check thread safety

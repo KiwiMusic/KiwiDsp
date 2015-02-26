@@ -24,7 +24,7 @@
 #ifndef __DEF_KIWI_DSP_MATH__
 #define __DEF_KIWI_DSP_MATH__
 
-#include "../Context/DspDevice.h"
+#include "../KiwiDspModels/KiwiDspModels.h"
 
 namespace Kiwi
 {

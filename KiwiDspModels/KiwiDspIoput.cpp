@@ -21,10 +21,10 @@
  ==============================================================================
 */
 
-#include "DspIoput.h"
-#include "DspNode.h"
-#include "DspChain.h"
-#include "DspContext.h"
+#include "KiwiDspIoput.h"
+#include "KiwiDspNode.h"
+#include "KiwiDspChain.h"
+#include "KiwiDspContext.h"
 
 namespace Kiwi
 {

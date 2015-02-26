@@ -21,8 +21,8 @@
  ==============================================================================
 */
 
-#include "DspChain.h"
-#include "DspContext.h"
+#include "KiwiDspChain.h"
+#include "KiwiDspContext.h"
 
 namespace Kiwi
 {
