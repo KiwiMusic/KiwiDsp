@@ -24,7 +24,7 @@
 #ifndef __DEF_KIWI_DSP_PORTAUDIO__
 #define __DEF_KIWI_DSP_PORTAUDIO__
 
-#include "../Dsp.h"
+#include "../KiwiDsp.h"
 #include <portaudio.h>
 
 namespace Kiwi

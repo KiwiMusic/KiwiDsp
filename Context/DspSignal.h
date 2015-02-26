@@ -24,7 +24,7 @@
 #ifndef __DEF_KIWI_DSP_SIGNAL__
 #define __DEF_KIWI_DSP_SIGNAL__
 
-#include "../Core/Core.h"
+#include "../../KiwiCore/KiwiCore.h"
 
 namespace Kiwi
 {
