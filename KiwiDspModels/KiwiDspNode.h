@@ -25,6 +25,7 @@
 #define __DEF_KIWI_DSP_NODE__
 
 #include "KiwiDspIoput.h"
+#include "KiwiDspExpr.h"
 
 namespace Kiwi
 {
@@ -125,7 +126,7 @@ namespace Kiwi
         /** The method releases the process after the dsp.
          @param node The dsp node that owns the dsp informations.
          */
-        virtual void release() noexcept = 0;
+        virtual void release() noexcept {};
         
     public:
         
@@ -140,7 +141,7 @@ namespace Kiwi
         //! The destructor.
         /** Free the input and ouputs vectors and matrices.
          */
-        virtual ~DspNode();
+        virtual ~DspNode() noexcept;
         
         //! Retrieve the dsp chain of the node.
         /** This function retrieves the dsp chain of the node.
@@ -251,7 +252,19 @@ namespace Kiwi
         /** The method retrieves the name of the process.
          @return The name of the process.
          */
-        virtual string getName() const noexcept = 0;
+        virtual string getName() const noexcept
+        {
+            return string();
+        }
+        
+        //! Retrieve the mathematical expression of the process.
+        /** The method retrieves the mathematical expression of the process.
+         @param expr The mathematical expression of the process.
+         */
+        virtual void getExpr(DspExpr& expr) const noexcept
+        {
+            ;
+        }
         
     protected:
         

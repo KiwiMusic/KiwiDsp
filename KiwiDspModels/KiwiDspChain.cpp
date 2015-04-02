@@ -211,13 +211,18 @@ namespace Kiwi
         }
     }
     
+    bool DspChain::compareNodes(sDspNode const& node1, sDspNode const& node2)
+    {
+        return node1->index < node2->index;
+    }
+    
     void DspChain::start() throw(DspError&)
     {
         if(m_running)
         {
             stop();
         }
-        
+        DspExpr expr("chain");
         lock_guard<mutex> guard(m_mutex);
         
         for(vector<sDspLink>::size_type i = 0; i < m_links.size(); i++)
@@ -244,18 +249,26 @@ namespace Kiwi
         }
         temp.clear();
         
+        sort(m_nodes.begin(), m_nodes.end(), compareNodes);
         for(vector<sDspNode>::size_type i = 0; i < m_nodes.size(); i++)
         {
-            try
+            if(m_nodes[i]->index)
             {
-                m_nodes[i]->start();
-            }
-            catch(DspError& e)
-            {
-                throw e;
+                try
+                {
+                    m_nodes[i]->start();
+                }
+                catch(DspError& e)
+                {
+                    throw e;
+                }
+                if(m_nodes[i]->isRunning())
+                {
+                    m_nodes[i]->getExpr(expr);
+                }
             }
         }
-        
+        expr.post();
         m_running = true;
     }
     

@@ -204,6 +204,16 @@ namespace Kiwi
          */
         virtual void setVectorSize(ulong const vectorsize) = 0;
         
+        //! Start the device.
+        /** This function starts the device.
+         */
+        virtual void start() = 0;
+        
+        //! Stop the device.
+        /** This function stops the device.
+         */
+        virtual void stop() = 0;
+        
         //! Retrieve the inputs sample matrix.
         /** This function retrieves the inputs sample matrix.
          @param channel the index of the channel.

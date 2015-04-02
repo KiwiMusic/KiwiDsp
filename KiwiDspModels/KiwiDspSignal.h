@@ -107,6 +107,10 @@ namespace Kiwi
             cout << endl;
         }
         
+        // ================================================================================ //
+        //                                      ARITHMETIC                                  //
+        // ================================================================================ //
+        
         static inline void vcopy(const ulong vectorsize, const float* in1, float* out1)
         {
 #if defined (__APPLE__) || defined(__CBLAS__)
@@ -197,27 +201,61 @@ namespace Kiwi
 #endif
         }
         
-        static inline void vfill(ulong vectorsize, const float& in1, float* out1)
+        static inline void vfill(ulong vectorsize, const float in1, float* out1)
         {
 #ifdef __APPLE__
             vDSP_vfill(&in1, out1, 1, (vDSP_Length)vectorsize);
 #elif __CATLAS__
-            catlas_sset((const int)vectorsize, &in1, out1, 1);
+            catlas_sset((const int)vectorsize, in1, out1, 1);
 #else
-            while(vectorsize--)
-                *(out1++) = in1;
+            if(vectorsize&7)
+            {
+                for(; vectorsize; vectorsize -= 8, out1 += 8)
+                {
+                    out1[0] = in1;
+                    out1[1] = in1;
+                    out1[2] = in1;
+                    out1[3] = in1;
+                    out1[4] = in1;
+                    out1[5] = in1;
+                    out1[6] = in1;
+                    out1[7] = in1;
+                }
+            }
+            else
+            {
+                while(vectorsize--)
+                    *(out1++) = in1;
+            }
 #endif
         }
         
-        static inline void vfill(ulong vectorsize, const double& in1, double* out1)
+        static inline void vfill(ulong vectorsize, const double in1, double* out1)
         {
 #ifdef __APPLE__
             vDSP_vfillD(&in1, out1, 1, (vDSP_Length)vectorsize);
 #elif __CATLAS__
-            catlas_sset((const int)vectorsize, &in1, out1, 1);
+            catlas_sset((const int)vectorsize, in1, out1, 1);
 #else
-            while(vectorsize--)
-                *(out1++) = in1;
+            if(vectorsize&7)
+            {
+                for(; vectorsize; vectorsize -= 8, out1 += 8)
+                {
+                    out1[0] = in1;
+                    out1[1] = in1;
+                    out1[2] = in1;
+                    out1[3] = in1;
+                    out1[4] = in1;
+                    out1[5] = in1;
+                    out1[6] = in1;
+                    out1[7] = in1;
+                }
+            }
+            else
+            {
+                while(vectorsize--)
+                    *(out1++) = in1;
+            }
 #endif
         }
         
@@ -240,13 +278,30 @@ namespace Kiwi
 #endif
         }
         
-        static inline void vsadd(ulong vectorsize, const float& in1, float* out1)
+        static inline void vsadd(ulong vectorsize, const float in1, float* out1)
         {
 #ifdef __APPLE__
             vDSP_vsadd(out1, 1, &in1, out1, 1, vectorsize);
 #else
-            while(vectorsize--)
-                *(out1++) += in1;
+            if(vectorsize&7)
+            {
+                for(; vectorsize; vectorsize -= 8, out1 += 8)
+                {
+                    out1[0] += in1;
+                    out1[1] += in1;
+                    out1[2] += in1;
+                    out1[3] += in1;
+                    out1[4] += in1;
+                    out1[5] += in1;
+                    out1[6] += in1;
+                    out1[7] += in1;
+                }
+            }
+            else
+            {
+                while(vectorsize--)
+                    *(out1++) += in1;
+            }
 #endif
         }
         
@@ -255,8 +310,25 @@ namespace Kiwi
 #ifdef __APPLE__
             vDSP_vsaddD(out1, 1, &in1, out1, 1, vectorsize);
 #else
-            while(vectorsize--)
-                *(out1++) += in1;
+            if(vectorsize&7)
+            {
+                for(; vectorsize; vectorsize -= 8, out1 += 8)
+                {
+                    out1[0] += in1;
+                    out1[1] += in1;
+                    out1[2] += in1;
+                    out1[3] += in1;
+                    out1[4] += in1;
+                    out1[5] += in1;
+                    out1[6] += in1;
+                    out1[7] += in1;
+                }
+            }
+            else
+            {
+                while(vectorsize--)
+                    *(out1++) += in1;
+            }
 #endif
         }
         
@@ -265,8 +337,25 @@ namespace Kiwi
 #if defined (__APPLE__) || defined(__CBLAS__)
             cblas_saxpy((const int)vectorsize, 1., in1, 1, out1, 1);
 #else
-            while(vectorsize--)
-                *(out1++) += *(in1++);
+            if(vectorsize&7)
+            {
+                for(; vectorsize; vectorsize -= 8, in1 += 8, out1 += 8)
+                {
+                    out1[0] += in1[0];
+                    out1[1] += in1[1];
+                    out1[2] += in1[2];
+                    out1[3] += in1[3];
+                    out1[4] += in1[4];
+                    out1[5] += in1[5];
+                    out1[6] += in1[6];
+                    out1[7] += in1[7];
+                }
+            }
+            else
+            {
+                while(vectorsize--)
+                    *(out1++) += *(in1++);
+            }
 #endif
         }
         
@@ -275,8 +364,25 @@ namespace Kiwi
 #if defined (__APPLE__) || defined(__CBLAS__)
             cblas_daxpy((const int)vectorsize, 1., in1, 1, out1, 1);
 #else
-            while(vectorsize--)
-                *(out1++) += *(in1++);
+            if(vectorsize&7)
+            {
+                for(; vectorsize; vectorsize -= 8, in1 += 8, out1 += 8)
+                {
+                    out1[0] += in1[0];
+                    out1[1] += in1[1];
+                    out1[2] += in1[2];
+                    out1[3] += in1[3];
+                    out1[4] += in1[4];
+                    out1[5] += in1[5];
+                    out1[6] += in1[6];
+                    out1[7] += in1[7];
+                }
+            }
+            else
+            {
+                while(vectorsize--)
+                    *(out1++) += *(in1++);
+            }
 #endif
         }
         
@@ -288,8 +394,23 @@ namespace Kiwi
             cblas_scopy(vectorsize, in1, 1, out1, 1);
             cblas_saxpy(vectorsize, 1., in2, 1, out1, 1);
 #else
-            while(vectorsize--)
-                *(out1++) = *(in1++) + *(in2++);
+            if(vectorsize&7)
+            {
+                for(; vectorsize; vectorsize -= 8, in1 += 8, in2 += 8, out1 += 8)
+                {
+                    float f0 = in1[0], f1 = in1[1], f2 = in1[2], f3 = in1[3];
+                    float f4 = in1[4], f5 = in1[5], f6 = in1[6], f7 = in1[7];
+                    float g0 = in2[0], g1 = in2[1], g2 = in2[2], g3 = in2[3];
+                    float g4 = in2[4], g5 = in2[5], g6 = in2[6], g7 = in2[7];
+                    out1[0] = f0 + g0; out1[1] = f1 + g1; out1[2] = f2 + g2; out1[3] = f3 + g3;
+                    out1[4] = f4 + g4; out1[5] = f5 + g5; out1[6] = f6 + g6; out1[7] = f7 + g7;
+                }
+            }
+            else
+            {
+                while(vectorsize--)
+                    *(out1++) = *(in1++) + *(in2++);
+            }
 #endif
         }
         
@@ -301,11 +422,37 @@ namespace Kiwi
             cblas_dcopy(vectorsize, in1, 1, out1, 1);
             cblas_daxpy(vectorsize, 1., in2, 1, out1, 1);
 #else
-            while(vectorsize--)
-                *(out1++) = *(in1++) + *(in2++);
+            if(vectorsize&7)
+            {
+                for(; vectorsize; vectorsize -= 8, in1 += 8, in2 += 8, out1 += 8)
+                {
+                    float f0 = in1[0], f1 = in1[1], f2 = in1[2], f3 = in1[3];
+                    float f4 = in1[4], f5 = in1[5], f6 = in1[6], f7 = in1[7];
+                    float g0 = in2[0], g1 = in2[1], g2 = in2[2], g3 = in2[3];
+                    float g4 = in2[4], g5 = in2[5], g6 = in2[6], g7 = in2[7];
+                    out1[0] = f0 + g0; out1[1] = f1 + g1; out1[2] = f2 + g2; out1[3] = f3 + g3;
+                    out1[4] = f4 + g4; out1[5] = f5 + g5; out1[6] = f6 + g6; out1[7] = f7 + g7;
+                }
+            }
+            else
+            {
+                while(vectorsize--)
+                    *(out1++) = *(in1++) + *(in2++);
+            }
 #endif
         }
         
+        // ================================================================================ //
+        //                                      GENERATOR                                   //
+        // ================================================================================ //
+        
+        //! Generate a white noise with single precision.
+        /** This function generates a white noise with single precision.
+         @param vectorsize The size of the vector.
+         @param seed       The seed for random generation (the first call of the function should take whatever seed you want, the next calls should take the last returned seed).
+         @param out1       The output vector.
+         @return The next seed to use.
+         */
         static inline int vnoise(ulong vectorsize, int seed, float* out1)
         {
             while(vectorsize--)
@@ -316,6 +463,13 @@ namespace Kiwi
             return seed;
         }
         
+        //! Generate a white noise with double precision.
+        /** This function generates a white noise with single precision.
+         @param vectorsize The size of the vector.
+         @param seed       The seed for random generation (the first call of the function should take whatever seed you want, the next calls should take the last returned seed).
+         @param out1       The output vector.
+         @return The next seed to use.
+         */
         static inline int vnoise(ulong vectorsize, int seed, double* out1)
         {
             while(vectorsize--)
@@ -325,21 +479,147 @@ namespace Kiwi
             }
             return seed;
         }
-        /*
-         static inline double vphasor(const ulong vectorsize, const float step, float phase, float* out1)
-         {
-         for(ulong i = 0; i < vectorsize; i++)
-         {
-         sample temp = (phase + (step * (float)input0[i]));
-         *(out1++) = phase = (temp - floorf(temp));
-         }
-         return phase;
-         }
-         
-         static inline double vphasor(ulong vectorsize, const double step, double phase, double* out1)
-         {
-         return phase;
-         }*/
+        
+        //! Generate a phasor with single precision and scalar frequency.
+        /** This function generates a phasor with single precision and scalar frequency.
+         @param vectorsize The size of the vector.
+         @param inc        The increment of the phase (should be the frequency of the phasor over the global frequency).
+         @param phase      The current phase of the phasor (the first call generally uses zero, the next calls should take the last returned phase).
+         @param out1       The output vector.
+         @return The next phase to use.
+         */
+        static inline float vsphasor(ulong vectorsize, const float inc, float phase, float* out1)
+        {
+            while(vectorsize--)
+            {
+                phase += inc;
+                phase = phase - floorf(phase);
+                *(out1++) = phase;
+            }
+            return phase;
+        }
+        
+        //! Generate a phasor with double precision and scalar frequency.
+        /** This function generates a phasor with double precision and scalar frequency.
+         @param vectorsize The size of the vector.
+         @param inc        The increment of the phase (should be the frequency of the phasor over the global frequency).
+         @param phase      The current phase of the phasor (the first call generally uses zero, the next calls should take the last returned phase).
+         @param out1       The output vector.
+         @return The next phase to use.
+         */
+        static inline double vsphasor(ulong vectorsize, const double step, double phase, double* out1)
+        {
+            while(vectorsize--)
+            {
+                phase += step;
+                phase = phase - floor(phase);
+                *(out1++) = phase;
+            }
+            return phase;
+        }
+        
+        //! Generate a phasor with single precision and signal frequency.
+        /** This function generates a phasor with single precision and signal frequency.
+         @param vectorsize The size of the vector.
+         @param ratio      The ratio (should be one over the global frequency).
+         @param phase      The current phase of the phasor (the first call generally uses zero, the next calls should take the last returned phase).
+         @param in1        The input vector that drives the frequency of the phasor.
+         @param out1       The output vector.
+         @return The next phase to use.
+         */
+        static inline float vphasor(ulong vectorsize, const float ratio, float phase, const float* in1, float* out1)
+        {
+            while(vectorsize--)
+            {
+                phase += ratio * *(in1++);
+                phase = phase - floorf(phase);
+                *(out1++) = phase;
+            }
+            return phase;
+        }
+        
+        //! Generate a phasor with double precision and signal frequency.
+        /** This function generates a phasor with double precision and signal frequency.
+         @param vectorsize The size of the vector.
+         @param ratio      The ratio (should be one over the global frequency).
+         @param phase      The current phase of the phasor (the first call generally uses zero, the next calls should take the last returned phase).
+         @param in1        The input vector that drives the frequency of the phasor.
+         @param out1       The output vector.
+         @return The next phase to use.
+         */
+        static inline double vphasor(ulong vectorsize, const double ratio, double phase, const double* in1, double* out1)
+        {
+            while(vectorsize--)
+            {
+                phase += ratio * *(in1++);
+                phase = phase - floor(phase);
+                *(out1++) = phase;
+            }
+            return phase;
+        }
+        
+        //! Reads a buffer with single precision and scalar frequency.
+        /** This function reads a buffer with single precision and scalar frequency.
+         @param vectorsize The size of the vector.
+         @param inc        The increment of the phase (should be the reading frequency over the global frequency).
+         @param phase      The current phase for reading (the first call generally uses zero, the next calls should take the last returned phase).
+         @param buffersize The size of the buffer to read.
+         @param buffer     The buffer.
+         @param out1       The output vector.
+         @return The next phase to use.
+         */
+        static inline float vsread(ulong vectorsize, const float inc, float phase, const float buffersize, const float* buffer, float* out1)
+        {
+            while(vectorsize--)
+            {
+                phase += inc;
+                phase = phase - floorf(phase);
+                *(out1++) = buffer[(int)(phase * buffersize)];
+            }
+            return phase;
+        }
+        
+        //! Reads a buffer with double precision and scalar frequency.
+        /** This function reads a buffer with double precision and scalar frequency.
+         @param vectorsize The size of the vector.
+         @param inc        The increment of the phase (should be the reading frequency over the global frequency).
+         @param phase      The current phase for reading (the first call generally uses zero, the next calls should take the last returned phase).
+         @param buffersize The size of the buffer to read.
+         @param buffer     The buffer.
+         @param out1       The output vector.
+         @return The next phase to use.
+         */
+        static inline float vsread(ulong vectorsize, const double inc, double phase, const double buffersize, const double* buffer, double* out1)
+        {
+            while(vectorsize--)
+            {
+                phase += inc;
+                phase = phase - floorf(phase);
+                *(out1++) = buffer[(int)(phase * buffersize)];
+            }
+            return phase;
+        }
+        
+        // ================================================================================ //
+        //                                      GENERATOR                                   //
+        // ================================================================================ //
+        class Filter
+        {
+        public:
+            
+            //! Apply a one pole filter with double precision and scalar coefficients.
+            /** This function applies a one pole filter with double precision and scalar coefficients.
+             $y(n) = b_0x(n) + b_1 x(n - 1)$
+             @param vectorsize  The size of the vector.
+             @param b0          The first coefficient.
+             @param b1          The second coefficient.
+             @param n           The n-1 sample.
+             @param in1         The input vector.
+             @param out1       The output vector.
+             @return The last sample computed.
+             */
+            static double onezero(ulong vectorsize, const double b0, const double b1, double n, const double* in1, double* out1);
+        };
     };
 }
 

@@ -54,6 +54,8 @@ namespace Kiwi
         
         void sortNodes(set<sDspNode>& nodes, ulong& index, sDspNode node) throw(DspError&);
         
+        static bool compareNodes(sDspNode const& node1, sDspNode const& node2);
+        
         //! Perform a tick on the dsp chain.
         /** The function calls once all the node methods of the dsp nodes.
          */

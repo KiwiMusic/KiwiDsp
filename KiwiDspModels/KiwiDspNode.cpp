@@ -52,7 +52,7 @@ namespace Kiwi
         }
     }
     
-    DspNode::~DspNode()
+    DspNode::~DspNode() noexcept
     {
         delete [] m_sample_ins;
         delete [] m_sample_outs;
@@ -151,38 +151,35 @@ namespace Kiwi
             m_samplerate = chain->getSampleRate();
             m_vectorsize = chain->getVectorSize();
             
-            prepare();
-            
-            if(m_running)
+            for(ulong i = 0; i < getNumberOfInputs(); i++)
             {
-                for(ulong i = 0; i < getNumberOfInputs(); i++)
+                try
                 {
-                    try
-                    {
-                        m_inputs[i]->start(shared_from_this());
-                    }
-                    catch(DspError& e)
-                    {
-                        m_running = false;
-                        throw e;
-                    }
-                    m_sample_ins[i] = m_inputs[i]->getVector();
+                    m_inputs[i]->start(shared_from_this());
                 }
-                for(ulong i = 0; i < getNumberOfOutputs(); i++)
+                catch(DspError& e)
                 {
-                    try
-                    {
-                        m_outputs[i]->start(shared_from_this());
-                    }
-                    catch(DspError& e)
-                    {
-                        m_running = false;
-                        throw e;
-                    }
-                    
-                    m_sample_outs[i] = m_outputs[i]->getVector();
+                    m_running = false;
+                    throw e;
                 }
+                m_sample_ins[i] = m_inputs[i]->getVector();
             }
+            for(ulong i = 0; i < getNumberOfOutputs(); i++)
+            {
+                try
+                {
+                    m_outputs[i]->start(shared_from_this());
+                }
+                catch(DspError& e)
+                {
+                    m_running = false;
+                    throw e;
+                }
+                
+                m_sample_outs[i] = m_outputs[i]->getVector();
+            }
+            
+            prepare();
         }
     }
     

@@ -34,7 +34,7 @@ namespace Kiwi
         ;
     }
     
-    DspSig::~DspSig()
+    DspSig::~DspSig() noexcept
     {
         ;
     }
@@ -42,6 +42,11 @@ namespace Kiwi
     string DspSig::getName() const noexcept
     {
         return "DspSig";
+    }
+    
+    void DspSig::getExpr(DspExpr& expr) const noexcept
+    {
+        DspExpr newexpr("sig", "a");
     }
     
     void DspSig::prepare() noexcept
@@ -52,11 +57,6 @@ namespace Kiwi
     void DspSig::perform() noexcept
     {
         Signal::vfill(getVectorSize(), m_value, getOutputsSamples()[0]);
-    }
-    
-    void DspSig::release() noexcept
-    {
-        ;
     }
     
     void DspSig::setValue(const sample value) noexcept
@@ -70,88 +70,236 @@ namespace Kiwi
     }
     
     // ================================================================================ //
-    //                                      PHASOR                                      //
-    // ================================================================================ //
-    
-    /*
-    Phasor<Scalar>::Phasor() noexcept : DspNode(0, 1), m_step(0.), m_phase(0.)
-    {
-        ;
-    }
-    
-    Phasor<Scalar>::~Phasor()
-    {
-        ;
-    }
-    
-    string Phasor<Scalar>::getName() const noexcept
-    {
-        return "Phasor (scalar)";
-    }
-    
-    void Phasor<Scalar>::prepare() noexcept
-    {
-        shouldPerform(isOutputConnected(0));
-        m_step = 1. / (sample)getSampleRate();
-    }
-    
-    void Phasor<Scalar>::perform() noexcept
-    {
-        m_phase = Signal::vphasor(getVectorSize(), m_step, m_phase, getOutputsSamples()[0]);
-        sample* input0 = getInputsSamples()[0];
-        sample* output0 = getOutputsSamples()[0];
-        for(int i = 0; i < getVectorSize(); i++)
-        {
-            sample temp = (m_phase + (m_step * (float)input0[i]));
-            output0[i] = (temp - floorf(temp));
-        }
-    }
-    
-    void Phasor<Scalar>::release() noexcept
-    {
-        
-    }*/
-    
-    // ================================================================================ //
     //                                      NOISE                                       //
     // ================================================================================ //
     
     int DspNoise::c_seed = 0;
-    
-    DspNoise::DspNoise(sDspChain chain, const int seed) noexcept : DspNode(chain, 0, 1), m_seed(seed)
-    {
-        ;
-    }
-    
-    DspNoise::~DspNoise()
-    {
-        ;
-    }
-    
-    string DspNoise::getName() const noexcept
-    {
-        return "DspNoise";
-    }
-    
-    void DspNoise::prepare() noexcept
-    {
-        shouldPerform(isOutputConnected(0));
-    }
-    
-    void DspNoise::perform() noexcept
-    {
-        m_seed = Signal::vnoise(getVectorSize(), m_seed, getOutputsSamples()[0]);
-    }
-    
-    void DspNoise::release() noexcept
-    {
-        
-    }
-    
     int DspNoise::nextSeed() noexcept
     {
         c_seed = (12345 + (1103515245 * c_seed));
         return c_seed;
+    }
+    
+    DspNoise::White::White(sDspChain chain, const int seed) noexcept : DspNode(chain, 0, 1), m_seed(seed)
+    {
+        ;
+    }
+    
+    DspNoise::White::~White() noexcept
+    {
+        ;
+    }
+    
+    string DspNoise::White::getName() const noexcept
+    {
+        return "White Noise";
+    }
+    
+    void DspNoise::White::getExpr(DspExpr& expr) const noexcept
+    {
+        /*
+        DspExpr expr("noise");
+        expr.setEquation("4.656612875245797e-10f * s_seed");
+        return expr;
+         */
+    }
+    
+    void DspNoise::White::prepare() noexcept
+    {
+        shouldPerform(isOutputConnected(0));
+    }
+    
+    void DspNoise::White::perform() noexcept
+    {
+        m_seed = Signal::vnoise(getVectorSize(), m_seed, getOutputsSamples()[0]);
+    }
+    
+    DspNoise::Pink::Pink(sDspChain chain, const int seed) noexcept : DspNode(chain, 0, 1), m_seed(seed)
+    {
+        ;
+    }
+    
+    DspNoise::Pink::~Pink() noexcept
+    {
+        ;
+    }
+    
+    string DspNoise::Pink::getName() const noexcept
+    {
+        return "Pink Noise";
+    }
+    
+    void DspNoise::Pink::prepare() noexcept
+    {
+        shouldPerform(isOutputConnected(0));
+    }
+    
+    void DspNoise::Pink::perform() noexcept
+    {
+        m_seed = Signal::vnoise(getVectorSize(), m_seed, getOutputsSamples()[0]);
+    }
+    
+    // ================================================================================ //
+    //                                      PHASOR                                      //
+    // ================================================================================ //
+    
+    DspPhasor<DspScalar>::DspPhasor(sDspChain chain, const sample frequency, const sample phase) noexcept :
+    DspNode(chain, 0, 1), m_frequency(frequency), m_step(0.), m_phase(phase)
+    {
+        ;
+    }
+    
+    DspPhasor<DspScalar>::~DspPhasor() noexcept
+    {
+        ;
+    }
+    
+    string DspPhasor<DspScalar>::getName() const noexcept
+    {
+        return "Phasor (scalar)";
+    }
+    
+    void DspPhasor<DspScalar>::getExpr(DspExpr& expr) const noexcept
+    {
+        expr.addExpr(DspExpr("phasor", "phase(a1)"));
+    }
+
+    void DspPhasor<DspScalar>::prepare() noexcept
+    {
+        shouldPerform(isOutputConnected(0));
+        m_step = m_frequency / (sample)getSampleRate();
+    }
+    
+    void DspPhasor<DspScalar>::perform() noexcept
+    {
+        m_phase = Signal::vsphasor(getVectorSize(), m_step, m_phase, getOutputsSamples()[0]);
+    }
+    
+    void DspPhasor<DspScalar>::setFrequency(const sample frequency) noexcept
+    {
+        m_frequency = frequency;
+        m_step = m_frequency / (sample)getSampleRate();
+    }
+    
+    sample DspPhasor<DspScalar>::getFrequency() const noexcept
+    {
+        return m_frequency;
+    }
+    
+    void DspPhasor<DspScalar>::setPhase(const sample phase) noexcept
+    {
+        m_phase = wrap(phase, sample(0.), sample(1.));
+    }
+    
+    sample DspPhasor<DspScalar>::getPhase() const noexcept
+    {
+        return m_phase;
+    }
+    
+    DspPhasor<DspVector>::DspPhasor(sDspChain chain, const sample phase) noexcept :
+    DspNode(chain, 1, 1), m_const(0.), m_phase(phase)
+    {
+        ;
+    }
+    
+    DspPhasor<DspVector>::~DspPhasor() noexcept
+    {
+        ;
+    }
+    
+    string DspPhasor<DspVector>::getName() const noexcept
+    {
+        return "Phasor (vector)";
+    }
+    
+    void DspPhasor<DspVector>::prepare() noexcept
+    {
+        shouldPerform(isOutputConnected(0));
+        m_const = 1. / (sample)getSampleRate();
+    }
+    
+    void DspPhasor<DspVector>::perform() noexcept
+    {
+        m_phase = Signal::vphasor(getVectorSize(), m_const, m_phase, getInputsSamples()[0], getOutputsSamples()[0]);
+    }
+    
+    void DspPhasor<DspVector>::setPhase(const sample phase) noexcept
+    {
+        m_phase = wrap(phase, sample(0.), sample(1.));
+    }
+    
+    sample DspPhasor<DspVector>::getPhase() const noexcept
+    {
+        return m_phase;
+    }
+    
+    // ================================================================================ //
+    //                                      OSCILLATOR                                  //
+    // ================================================================================ //
+    sample* genCosinusBuffer()
+    {
+        sample* values = new sample[1<<16];
+        for(ulong i = 0; i < 1<<16; i++)
+        {
+            values[i] = cos(sample(i) / sample(1<<16) * M_2_PI);
+        }
+        return values;
+    }
+    
+    const sample* DspOscillator<DspScalar>::m_buffer = genCosinusBuffer();
+    
+    DspOscillator<DspScalar>::DspOscillator(sDspChain chain, const sample frequency, const sample phase) noexcept :
+    DspNode(chain, 0, 1), m_frequency(frequency), m_step(0.), m_phase(phase)
+    {
+        
+    }
+    
+    DspOscillator<DspScalar>::~DspOscillator()  noexcept
+    {
+        
+    }
+    
+    string DspOscillator<DspScalar>::getName() const noexcept
+    {
+        return "Oscillator (scalar)";
+    }
+    
+    void DspOscillator<DspScalar>::getExpr(DspExpr& expr) const noexcept
+    {
+        expr.addExpr(DspExpr("osc", "osc(a1)"));
+    }
+
+    
+    void DspOscillator<DspScalar>::prepare() noexcept
+    {
+        shouldPerform(isOutputConnected(0));
+        m_step = m_frequency / (sample)getSampleRate();
+    }
+    
+    void DspOscillator<DspScalar>::perform() noexcept
+    {
+        m_phase = Signal::vsread(getVectorSize(), m_step, m_phase, sample(1<<16), m_buffer, getOutputsSamples()[0]);
+    }
+    
+    void DspOscillator<DspScalar>::setFrequency(const sample frequency) noexcept
+    {
+        m_frequency = frequency;
+        m_step = m_frequency / (sample)getSampleRate();
+    }
+    
+    sample DspOscillator<DspScalar>::getFrequency() const noexcept
+    {
+        return m_frequency;
+    }
+    
+    void DspOscillator<DspScalar>::setPhase(const sample phase) noexcept
+    {
+        m_phase = wrap(phase, sample(0.), sample(1.));
+    }
+    
+    sample DspOscillator<DspScalar>::getPhase() const noexcept
+    {
+        return m_phase;
     }
 }
 

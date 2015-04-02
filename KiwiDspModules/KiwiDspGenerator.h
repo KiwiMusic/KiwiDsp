@@ -38,8 +38,10 @@ namespace Kiwi
         sample m_value;
     public:
         DspSig(sDspChain chain, const sample value = 0.) noexcept;
-        ~DspSig();
+        ~DspSig() noexcept;
         string getName() const noexcept override;
+        void getExpr(DspExpr& expr) const noexcept override;
+
         void prepare() noexcept override;
         void perform() noexcept override;
         void release() noexcept override;
@@ -48,56 +50,110 @@ namespace Kiwi
     };
     
     // ================================================================================ //
-    //                                      PHASOR                                      //
-    // ================================================================================ //
-    /*
-    template <DspMode mode> class Phasor;
-    
-    template <> class Phasor<Scalar> : public DspNode
-    {
-    private:
-        sample m_step;
-        mutable sample m_phase;
-    public:
-        Phasor() noexcept;
-        ~Phasor();
-        string getName() const noexcept override;
-        void prepare() noexcept override;
-        void perform() noexcept override;
-        void release() noexcept override;
-    };
-    
-    template <> class Phasor<Vector> : public DspNode
-    {
-    private:
-        sample m_step;
-        mutable sample m_phase;
-    public:
-        Phasor() noexcept;
-        ~Phasor();
-        string getName() const noexcept override;
-        void prepare() noexcept override;
-        void perform() noexcept override;
-        void release() noexcept override;
-    };*/
-    
-    // ================================================================================ //
     //                                      NOISE                                       //
     // ================================================================================ //
     
-    class DspNoise : public DspNode
+    class DspNoise
     {
     private:
         static int c_seed;
-        int m_seed;
     public:
-        DspNoise(sDspChain chain, const int seed = 0.) noexcept;
-        ~DspNoise();
+        static int nextSeed() noexcept;
+        
+        class White : public DspNode
+        {
+        private:
+            int m_seed;
+        public:
+            White(sDspChain chain, const int seed = 0.) noexcept;
+            ~White()  noexcept;
+            string getName() const noexcept override;
+            void getExpr(DspExpr& expr) const noexcept override;
+            
+            void prepare() noexcept override;
+            void perform() noexcept override;
+        };
+        
+        class Pink : public DspNode
+        {
+        private:
+            static int c_seed;
+            int m_seed;
+        public:
+            Pink(sDspChain chain, const int seed = 0.) noexcept;
+            ~Pink()  noexcept;
+            string getName() const noexcept override;
+            void prepare() noexcept override;
+            void perform() noexcept override;
+        };
+    };
+    
+    // ================================================================================ //
+    //                                      PHASOR                                      //
+    // ================================================================================ //
+    
+    template <DspMode mode> class DspPhasor;
+    
+    template <> class DspPhasor<DspScalar> : public DspNode
+    {
+    private:
+        sample m_frequency;
+        sample m_step;
+        sample m_phase;
+    public:
+        DspPhasor(sDspChain chain, const sample frequency = 0., const sample phase = 0.) noexcept;
+        ~DspPhasor()  noexcept;
+        string getName() const noexcept override;
+        void getExpr(DspExpr& expr) const noexcept override;
+        
+        void prepare() noexcept override;
+        void perform() noexcept override;
+        void setFrequency(const sample frequency) noexcept;
+        sample getFrequency() const noexcept;
+        void setPhase(const sample phase) noexcept;
+        sample getPhase() const noexcept;
+    };
+    
+    template <> class DspPhasor<DspVector> : public DspNode
+    {
+    private:
+        sample m_const;
+        sample m_phase;
+    public:
+        DspPhasor(sDspChain chain, const sample phase = 0.) noexcept;
+        ~DspPhasor() noexcept;
         string getName() const noexcept override;
         void prepare() noexcept override;
         void perform() noexcept override;
-        void release() noexcept override;
-        static int nextSeed() noexcept;
+        void setPhase(const sample phase) noexcept;
+        sample getPhase() const noexcept;
+    };
+    
+    // ================================================================================ //
+    //                                      OSCILLATOR                                  //
+    // ================================================================================ //
+    
+    template <DspMode mode> class DspOscillator;
+    
+    template <> class DspOscillator<DspScalar> : public DspNode
+    {
+    private:
+        static const sample* m_buffer;
+        sample m_frequency;
+        sample m_step;
+        sample m_phase;
+    public:
+        DspOscillator(sDspChain chain, const sample frequency = 0., const sample phase = 0.) noexcept;
+        ~DspOscillator()  noexcept;
+        string getName() const noexcept override;
+        void getExpr(DspExpr& expr) const noexcept override;
+        
+        void prepare() noexcept override;
+        void perform() noexcept override;
+        void setFrequency(const sample frequency) noexcept;
+        sample getFrequency() const noexcept;
+        void setPhase(const sample phase) noexcept;
+        sample getPhase() const noexcept;
     };
 }
 

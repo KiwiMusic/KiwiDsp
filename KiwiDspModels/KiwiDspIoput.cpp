@@ -112,7 +112,7 @@ namespace Kiwi
     DspInput::DspInput(const ulong index) noexcept :
     m_index(index),
     m_vector(nullptr),
-    m_nothers(0),
+    m_nothers(0ul),
     m_others(nullptr)
     {
         
@@ -156,7 +156,7 @@ namespace Kiwi
             delete [] m_others;
             m_others = nullptr;
         }
-        m_nothers   = 0;
+        m_nothers   = 0ul;
     }
     
     void DspInput::start(sDspNode node) throw(DspError&)
@@ -188,8 +188,8 @@ namespace Kiwi
                     it = m_links.erase(it);
                 }
             }
-            m_nothers = m_links.size();
-            m_others  = new sample*[m_nothers];
+            
+            m_others  = new sample*[m_links.size()];
             ulong inc = 0;
             for(auto it = m_links.begin(); it != m_links.end(); ++it)
             {
@@ -224,6 +224,7 @@ namespace Kiwi
                 throw DspError(node, DspError::Alloc);
             }
             Signal::vclear(node->getVectorSize(), m_vector);
+            m_nothers = m_links.size();
         }
     }
     
