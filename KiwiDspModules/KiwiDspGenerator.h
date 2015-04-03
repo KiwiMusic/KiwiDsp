@@ -44,7 +44,6 @@ namespace Kiwi
 
         void prepare() noexcept override;
         void perform() noexcept override;
-        void release() noexcept override;
         void setValue(const sample value) noexcept;
         sample getValue() const noexcept;
     };
