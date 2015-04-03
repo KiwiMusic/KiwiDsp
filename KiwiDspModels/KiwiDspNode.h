@@ -46,10 +46,10 @@ namespace Kiwi
     private:
         
         const wDspChain m_chain;
-        const ulong     m_nins;
-        sample** const  m_sample_ins;
-        const ulong     m_nouts;
-        sample** const  m_sample_outs;
+        ulong           m_nins;
+        sample**        m_sample_ins;
+        ulong           m_nouts;
+        sample**        m_sample_outs;
         ulong           m_samplerate;
         ulong           m_vectorsize;
         vector<sDspInput>  m_inputs;
@@ -58,76 +58,6 @@ namespace Kiwi
         bool            m_inplace;
         bool            m_running;
         ulong           index;
-        
-        //! Prepare the node to process.
-        /** This function prepares the node to process. It allocates the signals for the inputs and the outputs.
-         @param The chain that owns the node.
-         */
-        void start() throw(DspError&);
-        
-        //! Call once the process method of the inputs and of the process class.
-        /** This function calls once the process.
-         */
-        inline void tick() noexcept
-        {
-            for(ulong i = 0; i < m_nins; i++)
-            {
-                m_inputs[i]->perform();
-            }
-            perform();
-        }
-        
-        //! Notify the process that the dsp has been stopped.
-        /** This function notifies that the dsp has been stopped.
-         */
-        void stop();
-        
-        //! Add a node to an input.
-        /** This function adds a node to an input.
-         @param node The node to add.
-         @param index The index of the input.
-         */
-        void addInput(sDspNode node, const ulong index);
-        
-        //! Add a node to an output.
-        /** This function adds a node to an output.
-         @param node The node to add.
-         @param index The index of the output.
-         */
-        void addOutput(sDspNode node, const ulong index);
-        
-        //! Remove a node from an input.
-        /** This function removes a node from an input.
-         @param node The node to remove.
-         @param index The index of the input.
-         */
-        void removeInput(sDspNode node, const ulong index);
-        
-        //! Remove a node from an output.
-        /** This function removes a node from an output.
-         @param node The node to remove.
-         @param index The index of the output.
-         */
-        void removeOutput(sDspNode node, const ulong index);
-        
-        //! Prepare the process for the dsp.
-        /** The method preprares the dsp.
-         @param node The dsp node that owns the dsp informations and should be configured.
-         */
-        virtual void prepare() noexcept = 0;
-        
-        //! Perform the process for the dsp.
-        /** The method performs the dsp.
-         @param node The dsp node that owns the dsp informations and the signals.
-         */
-        virtual void perform() noexcept = 0;
-        
-        //! Release the process after the dsp.
-        /** The method releases the process after the dsp.
-         @param node The dsp node that owns the dsp informations.
-         */
-        virtual void release() noexcept {};
-        
     public:
         
         //! The constructor.
@@ -136,7 +66,7 @@ namespace Kiwi
          @param nins    The number of inputs.
          @param nouts   The number of outputs.
          */
-        DspNode(sDspChain chain, const ulong nins, const ulong nouts) noexcept;
+        DspNode(sDspChain chain) noexcept;
         
         //! The destructor.
         /** Free the input and ouputs vectors and matrices.
@@ -268,6 +198,18 @@ namespace Kiwi
         
     protected:
         
+        //! Set the number of inputs.
+        /** This function sets the number of inputs. The method stop and re-compute the dsp chain.
+         @param nins The number of inputs.
+         */
+        void setNumberOfInlets(const ulong nins) throw(DspError&);
+        
+        //! Set the number of outputs.
+        /** This function sets the number of outputs. The method stop and re-compute the dsp chain.
+         @param nouts The number of outputs.
+         */
+        void setNumberOfOutlets(const ulong nouts) throw(DspError&);
+        
         //! Set if the inputs and outputs signals owns the same vectors.
         /** This function sets if the signals owns the same vectors.
          @param status The inplace status.
@@ -279,6 +221,77 @@ namespace Kiwi
          @param status The perform status.
          */
         void shouldPerform(const bool status) noexcept;
+        
+        //! Prepare the process for the dsp.
+        /** The method preprares the dsp.
+         @param node The dsp node that owns the dsp informations and should be configured.
+         */
+        virtual void prepare() noexcept = 0;
+        
+        //! Perform the process for the dsp.
+        /** The method performs the dsp.
+         @param node The dsp node that owns the dsp informations and the signals.
+         */
+        virtual void perform() noexcept = 0;
+        
+        //! Release the process after the dsp.
+        /** The method releases the process after the dsp.
+         @param node The dsp node that owns the dsp informations.
+         */
+        virtual void release() noexcept {};
+        
+    private:
+        
+        //! Prepare the node to process.
+        /** This function prepares the node to process. It allocates the signals for the inputs and the outputs.
+         @param The chain that owns the node.
+         */
+        void start() throw(DspError&);
+        
+        //! Call once the process method of the inputs and of the process class.
+        /** This function calls once the process.
+         */
+        inline void tick() noexcept
+        {
+            for(ulong i = 0; i < m_nins; i++)
+            {
+                m_inputs[i]->perform();
+            }
+            perform();
+        }
+        
+        //! Notify the process that the dsp has been stopped.
+        /** This function notifies that the dsp has been stopped.
+         */
+        void stop();
+        
+        //! Add a node to an input.
+        /** This function adds a node to an input.
+         @param node The node to add.
+         @param index The index of the input.
+         */
+        void addInput(sDspNode node, const ulong index);
+        
+        //! Add a node to an output.
+        /** This function adds a node to an output.
+         @param node The node to add.
+         @param index The index of the output.
+         */
+        void addOutput(sDspNode node, const ulong index);
+        
+        //! Remove a node from an input.
+        /** This function removes a node from an input.
+         @param node The node to remove.
+         @param index The index of the input.
+         */
+        void removeInput(sDspNode node, const ulong index);
+        
+        //! Remove a node from an output.
+        /** This function removes a node from an output.
+         @param node The node to remove.
+         @param index The index of the output.
+         */
+        void removeOutput(sDspNode node, const ulong index);
     };
 }
 

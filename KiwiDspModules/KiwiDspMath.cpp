@@ -29,10 +29,12 @@ namespace Kiwi
     //                                      PLUS                                        //
     // ================================================================================ //
     
-    DspPlus<DspScalar>::DspPlus(sDspChain chain, const sample value) noexcept : DspNode(chain, 1, 1),
+    DspPlus<DspScalar>::DspPlus(sDspChain chain, const sample value) noexcept :
+    DspNode(chain),
     m_value(value)
     {
-        ;
+        setNumberOfInlets(1ul);
+        setNumberOfOutlets(1ul);
     }
     
     DspPlus<DspScalar>::~DspPlus()
@@ -70,9 +72,10 @@ namespace Kiwi
         return m_value;
     }
     
-    DspPlus<DspVector>::DspPlus(sDspChain chain) noexcept : DspNode(chain, 2, 1)
+    DspPlus<DspVector>::DspPlus(sDspChain chain) noexcept : DspNode(chain)
     {
-        ;
+        setNumberOfInlets(2ul);
+        setNumberOfOutlets(1ul);
     }
     
     DspPlus<DspVector>::~DspPlus()

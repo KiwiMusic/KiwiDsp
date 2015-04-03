@@ -29,9 +29,12 @@ namespace Kiwi
     //                                      SIG                                         //
     // ================================================================================ //
     
-    DspSig::DspSig(sDspChain chain, const sample value) noexcept : DspNode(chain, 0, 1), m_value(value)
+    DspSig::DspSig(sDspChain chain, const sample value) noexcept :
+    DspNode(chain),
+    m_value(value)
     {
-        ;
+        setNumberOfInlets(0ul);
+        setNumberOfOutlets(1ul);
     }
     
     DspSig::~DspSig() noexcept
@@ -80,9 +83,10 @@ namespace Kiwi
         return c_seed;
     }
     
-    DspNoise::White::White(sDspChain chain, const int seed) noexcept : DspNode(chain, 0, 1), m_seed(seed)
+    DspNoise::White::White(sDspChain chain, const int seed) noexcept : DspNode(chain), m_seed(seed)
     {
-        ;
+        setNumberOfInlets(0ul);
+        setNumberOfOutlets(1ul);
     }
     
     DspNoise::White::~White() noexcept
@@ -114,9 +118,10 @@ namespace Kiwi
         m_seed = Signal::vnoise(getVectorSize(), m_seed, getOutputsSamples()[0]);
     }
     
-    DspNoise::Pink::Pink(sDspChain chain, const int seed) noexcept : DspNode(chain, 0, 1), m_seed(seed)
+    DspNoise::Pink::Pink(sDspChain chain, const int seed) noexcept : DspNode(chain), m_seed(seed)
     {
-        ;
+        setNumberOfInlets(0ul);
+        setNumberOfOutlets(1ul);
     }
     
     DspNoise::Pink::~Pink() noexcept
@@ -144,9 +149,10 @@ namespace Kiwi
     // ================================================================================ //
     
     DspPhasor<DspScalar>::DspPhasor(sDspChain chain, const sample frequency, const sample phase) noexcept :
-    DspNode(chain, 0, 1), m_frequency(frequency), m_step(0.), m_phase(phase)
+    DspNode(chain), m_frequency(frequency), m_step(0.), m_phase(phase)
     {
-        ;
+        setNumberOfInlets(0ul);
+        setNumberOfOutlets(1ul);
     }
     
     DspPhasor<DspScalar>::~DspPhasor() noexcept
@@ -197,9 +203,10 @@ namespace Kiwi
     }
     
     DspPhasor<DspVector>::DspPhasor(sDspChain chain, const sample phase) noexcept :
-    DspNode(chain, 1, 1), m_const(0.), m_phase(phase)
+    DspNode(chain), m_const(0.), m_phase(phase)
     {
-        ;
+        setNumberOfInlets(1ul);
+        setNumberOfOutlets(1ul);
     }
     
     DspPhasor<DspVector>::~DspPhasor() noexcept
@@ -249,9 +256,10 @@ namespace Kiwi
     const sample* DspOscillator<DspScalar>::m_buffer = genCosinusBuffer();
     
     DspOscillator<DspScalar>::DspOscillator(sDspChain chain, const sample frequency, const sample phase) noexcept :
-    DspNode(chain, 0, 1), m_frequency(frequency), m_step(0.), m_phase(phase)
+    DspNode(chain), m_frequency(frequency), m_step(0.), m_phase(phase)
     {
-        
+        setNumberOfInlets(0ul);
+        setNumberOfOutlets(1ul);
     }
     
     DspOscillator<DspScalar>::~DspOscillator()  noexcept

@@ -31,12 +31,12 @@ namespace Kiwi
     //                                      DSP NODE                                    //
     // ================================================================================ //
     
-    DspNode::DspNode(sDspChain chain, const ulong nins, const ulong nouts) noexcept :
+    DspNode::DspNode(sDspChain chain) noexcept :
     m_chain(chain),
-    m_nins(nins),
-    m_sample_ins(new sample*[m_nins]),
-    m_nouts(nouts),
-    m_sample_outs(new sample*[m_nouts]),
+    m_nins(0),
+    m_sample_ins(nullptr),
+    m_nouts(0),
+    m_sample_outs(nullptr),
     m_samplerate(0),
     m_vectorsize(0),
     m_inplace(true),
@@ -54,8 +54,15 @@ namespace Kiwi
     
     DspNode::~DspNode() noexcept
     {
-        delete [] m_sample_ins;
-        delete [] m_sample_outs;
+        stop();
+        if(m_sample_ins)
+        {
+            delete [] m_sample_ins;
+        }
+        if(m_sample_outs)
+        {
+            delete [] m_sample_outs;
+        }
         m_inputs.clear();
         m_outputs.clear();
     }
@@ -83,6 +90,91 @@ namespace Kiwi
         else
         {
             return nullptr;
+        }
+    }
+    
+    void DspNode::setNumberOfInlets(const ulong nins) throw(DspError&)
+    {
+        bool state = false;
+        if(m_running)
+        {
+            sDspChain chain = getChain();
+            if(chain)
+            {
+                try
+                {
+                    state = chain->suspend();
+                }
+                catch(DspError& e)
+                {
+                    throw e;
+                }
+            }
+            else
+            {
+                stop();
+            }
+        }
+        m_nins = nins;
+        if(m_sample_ins)
+        {
+            delete [] m_sample_ins;
+        }
+        m_sample_ins = new sample*[m_nins];
+        sDspChain chain = getChain();
+        if(chain)
+        {
+            try
+            {
+                chain->resume(state);
+            }
+            catch(DspError& e)
+            {
+                throw e;
+            }
+        }
+    }
+    
+
+    void DspNode::setNumberOfOutlets(const ulong nouts) throw(DspError&)
+    {
+        bool state = false;
+        if(m_running)
+        {
+            sDspChain chain = getChain();
+            if(chain)
+            {
+                try
+                {
+                    state = chain->suspend();
+                }
+                catch(DspError& e)
+                {
+                    throw e;
+                }
+            }
+            else
+            {
+                stop();
+            }
+        }
+        m_nouts = nouts;
+        if(m_sample_outs)
+        {
+            delete [] m_sample_outs;
+        }
+        m_sample_outs = new sample*[m_nouts];
+        sDspChain chain = getChain();
+        if(chain)
+        {
+            try
+            {
+                chain->resume(state);
+            }
+            catch(DspError& e)
+            {
+                throw e;
+            }
         }
     }
     
@@ -143,10 +235,7 @@ namespace Kiwi
         sDspChain chain = getChain();
         if(chain)
         {
-            if(m_running)
-            {
-                stop();
-            }
+            stop();
 
             m_samplerate = chain->getSampleRate();
             m_vectorsize = chain->getVectorSize();
@@ -185,15 +274,18 @@ namespace Kiwi
     
     void DspNode::stop()
     {
-        m_running = false;
-        release();
-        for(ulong i = 0; i < getNumberOfInputs(); i++)
+        if(m_running)
         {
-            m_inputs[i]->clear();
-        }
-        for(ulong i = 0; i < getNumberOfOutputs(); i++)
-        {
-            m_outputs[i]->clear();
+            m_running = false;
+            release();
+            for(ulong i = 0; i < getNumberOfInputs(); i++)
+            {
+                m_inputs[i]->clear();
+            }
+            for(ulong i = 0; i < getNumberOfOutputs(); i++)
+            {
+                m_outputs[i]->clear();
+            }
         }
     }
 }

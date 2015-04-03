@@ -29,10 +29,11 @@ namespace Kiwi
     //                                      PLUS                                        //
     // ================================================================================ //
     
-    DspDac::DspDac(sDspChain chain, vector<ulong> const& channels) noexcept :
-    DspNode(chain, channels.size(), 0)
+    DspDac::DspDac(sDspChain chain, vector<ulong> const& channels) noexcept : DspNode(chain)
     {
         m_channels = channels;
+        setNumberOfInlets(m_channels.size());
+        setNumberOfOutlets(0ul);
     }
     
     DspDac::~DspDac()
