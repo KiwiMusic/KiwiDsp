@@ -24,7 +24,7 @@
 #ifndef __DEF_KIWI_DSP_SIGNAL__
 #define __DEF_KIWI_DSP_SIGNAL__
 
-#include "../../KiwiCore/KiwiCore.h"
+#include "../KiwiCore/KiwiCore.h"
 
 namespace Kiwi
 {
@@ -426,10 +426,10 @@ namespace Kiwi
             {
                 for(; vectorsize; vectorsize -= 8, in1 += 8, in2 += 8, out1 += 8)
                 {
-                    float f0 = in1[0], f1 = in1[1], f2 = in1[2], f3 = in1[3];
-                    float f4 = in1[4], f5 = in1[5], f6 = in1[6], f7 = in1[7];
-                    float g0 = in2[0], g1 = in2[1], g2 = in2[2], g3 = in2[3];
-                    float g4 = in2[4], g5 = in2[5], g6 = in2[6], g7 = in2[7];
+                    double f0 = in1[0], f1 = in1[1], f2 = in1[2], f3 = in1[3];
+                    double f4 = in1[4], f5 = in1[5], f6 = in1[6], f7 = in1[7];
+                    double g0 = in2[0], g1 = in2[1], g2 = in2[2], g3 = in2[3];
+                    double g4 = in2[4], g5 = in2[5], g6 = in2[6], g7 = in2[7];
                     out1[0] = f0 + g0; out1[1] = f1 + g1; out1[2] = f2 + g2; out1[3] = f3 + g3;
                     out1[4] = f4 + g4; out1[5] = f5 + g5; out1[6] = f6 + g6; out1[7] = f7 + g7;
                 }

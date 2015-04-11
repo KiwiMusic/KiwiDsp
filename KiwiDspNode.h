@@ -178,15 +178,6 @@ namespace Kiwi
          */
         bool isOutputConnected(const ulong index) const noexcept;
         
-        //! Retrieve the name of the process.
-        /** The method retrieves the name of the process.
-         @return The name of the process.
-         */
-        virtual string getName() const noexcept
-        {
-            return string();
-        }
-        
         //! Retrieve the mathematical expression of the process.
         /** The method retrieves the mathematical expression of the process.
          @param expr The mathematical expression of the process.
@@ -195,8 +186,6 @@ namespace Kiwi
         {
             ;
         }
-        
-    protected:
         
         //! Set the number of inputs.
         /** This function sets the number of inputs. The method stop and re-compute the dsp chain.
@@ -209,6 +198,8 @@ namespace Kiwi
          @param nouts The number of outputs.
          */
         void setNumberOfOutlets(const ulong nouts) throw(DspError&);
+        
+    protected:
         
         //! Set if the inputs and outputs signals owns the same vectors.
         /** This function sets if the signals owns the same vectors.
